@@ -1,0 +1,1346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mariya Stark — Character Sheet</title>
+<link href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Cinzel+Decorative:wght@400;700&family=Cinzel:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --rose:          #C4849A;
+    --rose-light:    #DBA8B8;
+    --rose-pale:     #F2DCE6;
+    --teal-deep:     #173535;
+    --teal-mid:      #245858;
+    --teal-accent:   #3D8C8C;
+    --teal-pale:     #A8CCCC;
+    --purple:        #7B6B8D;
+    --purple-light:  #B0A4C4;
+    --purple-pale:   #DDD8EC;
+    --cream:         #F7F0E3;
+    --cream-dim:     #E4D8C4;
+    --parchment:     #F3E9D2;
+    --parchment-mid: #EAD9BC;
+    --parchment-drk: #DCCCA4;
+    --ink:           #2A1C10;
+    --ink-soft:      #463322;
+    --gold:          #C8A86A;
+  }
+
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    height: 100%;
+    overflow: hidden;
+  }
+
+  body {
+    font-family: 'Cormorant Garamond', serif;
+    background-color: #0E0B14;
+    background-image:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.72' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0.35'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23n)' opacity='0.06'/%3E%3C/svg%3E"),
+      radial-gradient(ellipse 120% 38% at 50% 0%, rgba(210,130,90,0.38) 0%, rgba(180,100,120,0.22) 35%, transparent 70%),
+      radial-gradient(ellipse 80% 28% at 30% 0%, rgba(240,170,100,0.22) 0%, transparent 55%),
+      radial-gradient(ellipse 60% 20% at 72% 0%, rgba(200,140,160,0.18) 0%, transparent 50%),
+      radial-gradient(ellipse at 15% 45%, rgba(90,60,110,0.25) 0%, transparent 50%),
+      radial-gradient(ellipse at 85% 55%, rgba(70,50,100,0.2) 0%, transparent 50%),
+      linear-gradient(180deg, #241630 0%, #1A1025 18%, #130D1E 40%, #0F0A18 65%, #0B0812 100%);
+    position: relative;
+  }
+
+  /* ── Dust canvas ── */
+  #dust {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── Ambient glows ── */
+  .glow-tl, .glow-br {
+    position: fixed;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .glow-tl {
+    top: -220px; left: -180px;
+    width: 700px; height: 700px;
+    background: radial-gradient(circle, rgba(210,140,100,0.09) 0%, rgba(180,100,130,0.06) 40%, transparent 68%);
+    animation: driftGlow 14s ease-in-out infinite alternate;
+  }
+  .glow-br {
+    bottom: -180px; right: -180px;
+    width: 560px; height: 560px;
+    background: radial-gradient(circle, rgba(100,70,140,0.1) 0%, transparent 68%);
+    animation: driftGlow 18s ease-in-out infinite alternate-reverse;
+  }
+  @keyframes driftGlow {
+    from { transform: translate(0,0) scale(1); }
+    to   { transform: translate(30px, 20px) scale(1.08); }
+  }
+
+  /* ════════════════════════════════════
+     APP SHELL — full viewport, fixed
+  ════════════════════════════════════ */
+  .app {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    z-index: 1;
+  }
+
+  /* ── Top header bar ── */
+  .top-bar {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 40px 14px;
+    border-bottom: 1px solid rgba(200,168,106,0.14);
+    background: linear-gradient(180deg, rgba(14,11,20,0.92) 0%, rgba(14,11,20,0.6) 100%);
+    backdrop-filter: blur(6px);
+    animation: riseIn 0.8s ease both;
+  }
+
+  .top-bar-left {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .bar-eyebrow {
+    font-family: 'Cinzel', serif;
+    font-size: 0.52rem;
+    letter-spacing: 0.38em;
+    color: #E8B890;
+    text-transform: uppercase;
+    opacity: 0.75;
+  }
+
+  .bar-name {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: clamp(1.1rem, 2.5vw, 1.6rem);
+    font-weight: 700;
+    color: #FFF0E4;
+    letter-spacing: 0.06em;
+    line-height: 1.1;
+    text-shadow: 0 0 30px rgba(230,160,110,0.4), 0 2px 10px rgba(0,0,0,0.9);
+  }
+
+  .bar-sub {
+    font-family: 'IM Fell English', serif;
+    font-style: italic;
+    font-size: 0.8rem;
+    color: #DDAAA0;
+    letter-spacing: 0.03em;
+    margin-top: 1px;
+  }
+
+  /* Ornament in the center of top bar */
+  .bar-ornament {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  .b-arm  { height: 1px; width: 50px; background: linear-gradient(90deg, transparent, #D4905A); opacity: 0.55; }
+  .b-arm.r{ background: linear-gradient(90deg, #D4905A, transparent); }
+  .b-gem  { width: 7px; height: 7px; background: #E09070; transform: rotate(45deg); box-shadow: 0 0 12px rgba(220,140,100,0.8); flex-shrink: 0; }
+  .b-gem-sm { width: 4px; height: 4px; background: #C4B0D8; transform: rotate(45deg); box-shadow: 0 0 7px rgba(180,160,210,0.6); flex-shrink: 0; }
+
+  /* house tag at right */
+  .bar-house {
+    font-family: 'Cinzel', serif;
+    font-size: 0.52rem;
+    color: #C4B8D8;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    opacity: 0.7;
+    text-align: right;
+  }
+
+  /* ── Navigation tabs ── */
+  .tab-bar {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    padding: 10px 40px 0;
+    background: rgba(14,11,20,0.5);
+    backdrop-filter: blur(4px);
+    animation: riseIn 0.9s ease 0.1s both;
+    position: relative;
+  }
+
+  .tab-bar::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent 0%, rgba(200,168,106,0.18) 20%, rgba(200,168,106,0.18) 80%, transparent 100%);
+  }
+
+  .tab-btn {
+    font-family: 'Cinzel', serif;
+    font-size: 0.58rem;
+    letter-spacing: 0.26em;
+    text-transform: uppercase;
+    color: rgba(228,216,196,0.55);
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid transparent;
+    padding: 8px 18px 10px;
+    cursor: pointer;
+    transition: color 0.25s, border-color 0.25s, background 0.25s;
+    position: relative;
+    white-space: nowrap;
+  }
+
+  .tab-btn:hover {
+    color: rgba(240,215,185,0.85);
+    background: rgba(255,255,255,0.03);
+  }
+
+  .tab-btn.active {
+    color: #F0D0B0;
+    border-bottom-color: #D4905A;
+  }
+
+  .tab-btn.tab-connections {
+    color: rgba(196,168,220,0.55);
+  }
+  .tab-btn.tab-connections:hover { color: rgba(210,185,235,0.85); }
+  .tab-btn.tab-connections.active {
+    color: #D4C8EC;
+    border-bottom-color: #9080B8;
+  }
+
+  /* ── Content area ── */
+  .content-area {
+    flex: 1;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 32px 40px 32px;
+  }
+
+  /* ── Individual page panels ── */
+  .page-panel {
+    display: none;
+    width: 100%;
+    max-width: 880px;
+    height: 100%;
+    flex-direction: column;
+    animation: pageReveal 0.45s cubic-bezier(0.22,1,0.36,1) both;
+  }
+  .page-panel.active {
+    display: flex;
+  }
+
+  @keyframes pageReveal {
+    from { opacity: 0; transform: translateY(14px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── Scrollable parchment column ── */
+  .scroll-col {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-right: 6px;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(200,168,106,0.3) transparent;
+  }
+
+  .scroll-col::-webkit-scrollbar { width: 5px; }
+  .scroll-col::-webkit-scrollbar-track { background: transparent; }
+  .scroll-col::-webkit-scrollbar-thumb {
+    background: rgba(200,168,106,0.28);
+    border-radius: 3px;
+  }
+
+  /* ════════════════════
+     PARCHMENT BASE
+  ════════════════════ */
+  .parchment {
+    position: relative;
+    border-radius: 2px;
+    background:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0.22'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23p)' opacity='0.055'/%3E%3C/svg%3E"),
+      linear-gradient(158deg, #F5ECD8 0%, #EDE2C4 40%, var(--parchment-mid) 72%, var(--parchment-drk) 100%);
+    box-shadow:
+      0 2px 4px rgba(0,0,0,0.3),
+      0 10px 30px rgba(0,0,0,0.5),
+      0 24px 70px rgba(0,0,0,0.3),
+      inset 0 1px 0 rgba(255,255,255,0.28),
+      inset 0 -2px 6px rgba(0,0,0,0.07);
+    transition: transform 0.35s cubic-bezier(0.22,1,0.36,1), box-shadow 0.35s ease;
+    margin-bottom: 20px;
+  }
+
+  .parchment::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 2px;
+    border: 1px solid rgba(148,112,60,0.32);
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  .parchment::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 2px;
+    background:
+      radial-gradient(ellipse at 0% 0%, rgba(100,70,20,0.08) 0%, transparent 50%),
+      radial-gradient(ellipse at 100% 100%, rgba(100,70,20,0.1) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .parchment:hover {
+    transform: translateY(-3px) rotate(0deg) !important;
+    box-shadow:
+      0 4px 8px rgba(0,0,0,0.4),
+      0 18px 50px rgba(0,0,0,0.6),
+      0 36px 90px rgba(0,0,0,0.3),
+      inset 0 1px 0 rgba(255,255,255,0.3);
+  }
+
+  /* ════════════════════
+     CARD LABELS
+  ════════════════════ */
+  .card-top {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  .card-top .gem-sm {
+    width: 6px; height: 6px;
+    transform: rotate(45deg);
+    flex-shrink: 0;
+  }
+  .card-top .c-label {
+    font-family: 'Cinzel', serif;
+    font-size: 0.64rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+  }
+  .card-top .c-rule { flex: 1; height: 1px; }
+
+  /* ════════════════════
+     HOME PAGE
+  ════════════════════ */
+  .home-hero {
+    display: flex;
+    align-items: flex-start;
+    gap: 0;
+    height: 100%;
+  }
+
+  /* left side-panel: portrait placeholder + quick stats */
+  .home-sidebar {
+    flex-shrink: 0;
+    width: 260px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding-right: 24px;
+  }
+
+  .portrait-frame {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 3/4;
+    background:
+      linear-gradient(145deg, rgba(240,220,200,0.06) 0%, rgba(180,140,160,0.04) 100%);
+    border: 1px solid rgba(200,168,106,0.22);
+    border-radius: 2px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  .portrait-frame::before {
+    content: '';
+    position: absolute;
+    inset: 6px;
+    border: 1px solid rgba(200,168,106,0.12);
+    border-radius: 1px;
+    pointer-events: none;
+  }
+
+  .portrait-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    opacity: 0.35;
+  }
+
+  .portrait-sigil {
+    font-size: 2.2rem;
+    color: #C8A86A;
+    line-height: 1;
+    text-shadow: 0 0 20px rgba(200,168,106,0.4);
+    animation: breathe 5s ease-in-out infinite;
+  }
+
+  @keyframes breathe {
+    0%, 100% { opacity: 0.3; transform: scale(1); }
+    50%       { opacity: 0.65; transform: scale(1.04); }
+  }
+
+  .portrait-label {
+    font-family: 'Cinzel', serif;
+    font-size: 0.48rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: #C8A86A;
+  }
+
+  /* corner ornaments */
+  .corner { position: absolute; width: 16px; height: 16px; }
+  .corner::before, .corner::after { content: ''; position: absolute; background: rgba(200,168,106,0.4); }
+  .corner::before { width: 100%; height: 1px; }
+  .corner::after  { width: 1px; height: 100%; }
+  .corner.tl { top: 10px; left: 10px; }
+  .corner.tr { top: 10px; right: 10px; transform: scaleX(-1); }
+  .corner.bl { bottom: 10px; left: 10px; transform: scaleY(-1); }
+  .corner.br { bottom: 10px; right: 10px; transform: scale(-1); }
+
+  /* stat pills */
+  .stat-card {
+    background: rgba(243,233,210,0.07);
+    border: 1px solid rgba(200,168,106,0.15);
+    border-radius: 2px;
+    padding: 14px 18px;
+    transition: background 0.2s;
+  }
+  .stat-card:hover { background: rgba(243,233,210,0.1); }
+
+  .stat-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 8px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(200,168,106,0.1);
+  }
+  .stat-row:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: none; }
+
+  .stat-key {
+    font-family: 'Cinzel', serif;
+    font-size: 0.5rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: rgba(200,180,155,0.6);
+  }
+  .stat-val {
+    font-family: 'IM Fell English', serif;
+    font-style: italic;
+    font-size: 0.88rem;
+    color: #E8D8C4;
+  }
+
+  /* arc tags in sidebar */
+  .arc-mini {
+    background: rgba(200,168,220,0.06);
+    border: 1px solid rgba(180,160,210,0.18);
+    border-radius: 2px;
+    padding: 12px 16px;
+  }
+  .arc-mini-label {
+    font-family: 'Cinzel', serif;
+    font-size: 0.48rem;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: rgba(196,168,220,0.55);
+    margin-bottom: 10px;
+  }
+  .arc-tag-sm {
+    font-family: 'IM Fell English', serif;
+    font-style: italic;
+    font-size: 0.82rem;
+    color: var(--purple-light);
+    display: block;
+    padding: 3px 0;
+    border-bottom: 1px solid rgba(180,160,210,0.1);
+    line-height: 1.5;
+  }
+  .arc-tag-sm:last-child { border-bottom: none; padding-bottom: 0; }
+
+  /* right main parchment */
+  .home-main {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-right: 4px;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(200,168,106,0.25) transparent;
+    height: 100%;
+  }
+  .home-main::-webkit-scrollbar { width: 4px; }
+  .home-main::-webkit-scrollbar-track { background: transparent; }
+  .home-main::-webkit-scrollbar-thumb { background: rgba(200,168,106,0.22); border-radius: 2px; }
+
+  .origins-card {
+    padding: 40px 48px 36px;
+    margin-bottom: 0;
+    transform: rotate(-0.15deg);
+  }
+  .origins-card .card-top .gem-sm { background: var(--teal-accent); box-shadow: 0 0 8px rgba(61,140,140,0.55); }
+  .origins-card .card-top .c-label { color: var(--teal-mid); }
+  .origins-card .card-top .c-rule { background: linear-gradient(90deg, rgba(61,140,140,0.35), transparent); }
+
+  .origins-card p {
+    font-size: 1.08rem;
+    line-height: 1.9;
+    color: var(--ink-soft);
+    text-align: justify;
+    margin-bottom: 14px;
+  }
+  .origins-card p + p { text-indent: 1.6em; }
+  .origins-card p:last-child { margin-bottom: 0; }
+
+  /* ════════════════════
+     SECTION PAGES
+  ════════════════════ */
+
+  /* Page-level heading parchment */
+  .page-header-card {
+    padding: 28px 44px 24px;
+    margin-bottom: 18px;
+    transform: rotate(-0.18deg);
+    background:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0.22'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23p)' opacity='0.055'/%3E%3C/svg%3E"),
+      linear-gradient(158deg, #F5ECD8 0%, #EDE2C4 40%, var(--parchment-mid) 72%, var(--parchment-drk) 100%);
+  }
+
+  .page-section-title {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: clamp(1.4rem, 3vw, 2rem);
+    font-weight: 400;
+    color: var(--ink);
+    letter-spacing: 0.06em;
+    line-height: 1.2;
+  }
+  .page-section-sub {
+    font-family: 'IM Fell English', serif;
+    font-style: italic;
+    font-size: 0.95rem;
+    color: var(--ink-soft);
+    margin-top: 6px;
+    opacity: 0.7;
+  }
+
+  .header-divider {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 16px;
+  }
+  .hd-line { flex: 1; height: 1px; }
+  .hd-gem  { width: 6px; height: 6px; transform: rotate(45deg); flex-shrink: 0; }
+  .hd-dot  { width: 3px; height: 3px; border-radius: 50%; flex-shrink: 0; opacity: 0.5; }
+
+  /* teal header */
+  .header-teal .page-section-title { color: var(--teal-deep); }
+  .header-teal .hd-line { background: linear-gradient(90deg, var(--teal-accent), transparent); opacity: 0.4; }
+  .header-teal .hd-gem  { background: var(--teal-accent); box-shadow: 0 0 8px rgba(61,140,140,0.5); }
+  .header-teal .hd-dot  { background: var(--teal-accent); }
+
+  /* rose header */
+  .header-rose .page-section-title { color: #7A3040; }
+  .header-rose .hd-line { background: linear-gradient(90deg, var(--rose), transparent); opacity: 0.4; }
+  .header-rose .hd-gem  { background: var(--rose); box-shadow: 0 0 8px rgba(196,132,154,0.5); }
+  .header-rose .hd-dot  { background: var(--rose); }
+
+  /* purple header */
+  .header-purple .page-section-title { color: #3D2F50; }
+  .header-purple .hd-line { background: linear-gradient(90deg, var(--purple), transparent); opacity: 0.4; }
+  .header-purple .hd-gem  { background: var(--purple); box-shadow: 0 0 8px rgba(123,107,141,0.5); }
+  .header-purple .hd-dot  { background: var(--purple); }
+
+  /* ── Entry cards ── */
+  .entry-card {
+    padding: 28px 44px 24px;
+    margin-bottom: 14px;
+    position: relative;
+  }
+  .entry-card:nth-child(even) { transform: rotate(0.15deg); }
+  .entry-card:nth-child(odd)  { transform: rotate(-0.12deg); }
+
+  .entry-card .card-top .gem-sm { width: 6px; height: 6px; }
+
+  /* teal entries */
+  .entry-teal .card-top .gem-sm  { background: var(--teal-accent); box-shadow: 0 0 7px rgba(61,140,140,0.5); }
+  .entry-teal .card-top .c-label { color: var(--teal-mid); }
+  .entry-teal .card-top .c-rule  { background: linear-gradient(90deg, rgba(61,140,140,0.3), transparent); }
+  .entry-teal .entry-body { border-left: 2px solid rgba(61,140,140,0.25); }
+
+  /* rose entries */
+  .entry-rose .card-top .gem-sm  { background: var(--rose); box-shadow: 0 0 7px rgba(196,132,154,0.5); }
+  .entry-rose .card-top .c-label { color: #A06070; }
+  .entry-rose .card-top .c-rule  { background: linear-gradient(90deg, rgba(196,132,154,0.3), transparent); }
+  .entry-rose .entry-body { border-left: 2px solid rgba(196,132,154,0.22); }
+
+  /* purple entries */
+  .entry-purple .card-top .gem-sm  { background: var(--purple); box-shadow: 0 0 7px rgba(123,107,141,0.5); }
+  .entry-purple .card-top .c-label { color: var(--purple); }
+  .entry-purple .card-top .c-rule  { background: linear-gradient(90deg, rgba(123,107,141,0.3), transparent); }
+  .entry-purple .entry-body { border-left: 2px solid rgba(123,107,141,0.22); }
+
+  /* gold entries */
+  .entry-gold .card-top .gem-sm  { background: var(--gold); box-shadow: 0 0 7px rgba(200,168,106,0.5); }
+  .entry-gold .card-top .c-label { color: #7A6020; }
+  .entry-gold .card-top .c-rule  { background: linear-gradient(90deg, rgba(200,168,106,0.3), transparent); }
+  .entry-gold .entry-body { border-left: 2px solid rgba(200,168,106,0.22); }
+
+  .entry-body {
+    font-size: 1.06rem;
+    line-height: 1.85;
+    color: var(--ink-soft);
+    padding-left: 16px;
+    margin-top: 4px;
+  }
+
+  /* ── Closing quote ── */
+  .closing-card {
+    padding: 32px 52px;
+    text-align: center;
+    transform: rotate(0.18deg);
+    margin-bottom: 0;
+    background:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0.22'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23p)' opacity='0.055'/%3E%3C/svg%3E"),
+      linear-gradient(158deg, #F5ECD8 0%, #EDE2C4 40%, var(--parchment-mid) 72%, var(--parchment-drk) 100%);
+  }
+
+  .closing-ornament {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 18px;
+  }
+  .closing-ornament .o-line { height: 1px; width: 70px; background: linear-gradient(90deg, transparent, var(--rose)); opacity: 0.5; }
+  .closing-ornament .o-line.r { background: linear-gradient(90deg, var(--rose), transparent); }
+  .closing-ornament .o-gem { width: 7px; height: 7px; background: var(--rose); transform: rotate(45deg); box-shadow: 0 0 10px rgba(196,132,154,0.6); }
+  .closing-ornament .o-dot { width: 3px; height: 3px; background: var(--gold); border-radius: 50%; opacity: 0.7; }
+
+  .closing-card blockquote {
+    font-family: 'IM Fell English', serif;
+    font-style: italic;
+    font-size: 1.12rem;
+    line-height: 2;
+    color: var(--ink-soft);
+    max-width: 520px;
+    margin: 0 auto;
+  }
+
+  .closing-ornament.bot { margin-bottom: 0; margin-top: 18px; }
+
+  /* ── Connections page ── */
+  .connections-card {
+    padding: 36px 44px;
+    margin-bottom: 0;
+    background:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0.22'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23p)' opacity='0.05'/%3E%3C/svg%3E"),
+      linear-gradient(148deg, #ECD8EE 0%, #DFD0EA 50%, #D4C6E2 100%);
+    transform: rotate(0.12deg);
+  }
+  .connections-card::before { border-color: rgba(123,107,141,0.3); }
+  .connections-card .card-top .gem-sm  { background: var(--purple); box-shadow: 0 0 8px rgba(123,107,141,0.55); }
+  .connections-card .card-top .c-label { color: var(--purple); }
+  .connections-card .card-top .c-rule  { background: linear-gradient(90deg, rgba(123,107,141,0.4), transparent); }
+
+  .connections-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 180px;
+    gap: 16px;
+    opacity: 0.45;
+  }
+  .connections-icon {
+    font-size: 2rem;
+    color: var(--purple);
+    animation: breathe 4s ease-in-out infinite;
+  }
+  .connections-hint {
+    font-family: 'IM Fell English', serif;
+    font-style: italic;
+    font-size: 1rem;
+    color: var(--purple);
+    letter-spacing: 0.04em;
+  }
+
+  .connection-entry {
+    padding: 16px 0;
+  }
+
+  .connection-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 8px;
+  }
+
+  .connection-name {
+    font-family: 'Cinzel', serif;
+    font-size: 0.88rem;
+    letter-spacing: 0.12em;
+    color: var(--purple);
+    font-weight: 600;
+  }
+
+  .connection-role {
+    font-family: 'Cinzel', serif;
+    font-size: 0.52rem;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: rgba(123,107,141,0.6);
+  }
+
+  .connection-body {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.02rem;
+    line-height: 1.78;
+    color: var(--ink-soft);
+    padding-left: 14px;
+    border-left: 2px solid rgba(123,107,141,0.2);
+  }
+
+  .connection-divider {
+    height: 1px;
+    background: linear-gradient(90deg, rgba(123,107,141,0.25), transparent);
+    margin: 4px 0;
+  }
+
+  /* ── Story page uses same single scroll ── */
+  .story-card {
+    padding: 40px 50px 36px;
+    margin-bottom: 16px;
+  }
+  .story-card:first-child { transform: rotate(-0.15deg); }
+  .story-card:nth-child(2) { transform: rotate(0.18deg); }
+  .story-card:nth-child(3) { transform: rotate(-0.1deg); }
+
+  .story-card p {
+    font-size: 1.08rem;
+    line-height: 1.92;
+    color: var(--ink-soft);
+    text-align: justify;
+    margin-bottom: 14px;
+  }
+  .story-card p + p { text-indent: 1.6em; }
+  .story-card p:last-child { margin-bottom: 0; }
+
+  .story-card .card-top .gem-sm { background: var(--teal-accent); box-shadow: 0 0 8px rgba(61,140,140,0.55); }
+  .story-card .card-top .c-label { color: var(--teal-mid); }
+  .story-card .card-top .c-rule  { background: linear-gradient(90deg, rgba(61,140,140,0.35), transparent); }
+
+  /* ════════════════════
+     ANIMATIONS
+  ════════════════════ */
+  @keyframes riseIn {
+    from { opacity: 0; transform: translateY(18px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ════════════════════
+     RESPONSIVE
+  ════════════════════ */
+  @media (max-width: 760px) {
+    .top-bar { padding: 14px 20px 12px; }
+    .bar-ornament { display: none; }
+    .content-area { padding: 20px 18px 20px; }
+    .tab-bar { padding: 8px 18px 0; gap: 0; overflow-x: auto; }
+    .tab-btn { padding: 6px 12px 9px; font-size: 0.52rem; }
+    .home-hero { flex-direction: column; gap: 18px; }
+    .home-sidebar { width: 100%; padding-right: 0; flex-direction: row; flex-wrap: wrap; }
+    .portrait-frame { display: none; }
+    .origins-card { padding: 24px 24px; }
+    .entry-card { padding: 22px 24px 18px; }
+    .story-card { padding: 24px 24px; }
+  }
+</style>
+</head>
+<body>
+
+<canvas id="dust"></canvas>
+<div class="glow-tl"></div>
+<div class="glow-br"></div>
+
+<div class="app">
+
+  <!-- ── TOP BAR ── -->
+  <header class="top-bar">
+    <div class="top-bar-left">
+      <span class="bar-eyebrow">Character Sheet</span>
+      <span class="bar-name">Mariya Stark</span>
+      <span class="bar-sub">Daughter of Winter, Drawn to Warmth</span>
+    </div>
+
+    <div class="bar-ornament">
+      <span class="b-arm"></span>
+      <span class="b-gem-sm"></span>
+      <span class="b-gem"></span>
+      <span class="b-gem-sm"></span>
+      <span class="b-arm r"></span>
+    </div>
+
+    <div class="bar-house">
+      House Stark of Winterfell<br>
+      Born of Stark &amp; Royce
+    </div>
+  </header>
+
+  <!-- ── TAB NAV ── -->
+  <nav class="tab-bar">
+    <button class="tab-btn active"          data-page="home">Overview</button>
+    <button class="tab-btn"                 data-page="story">The Story</button>
+    <button class="tab-btn"                 data-page="personality">Personality</button>
+    <button class="tab-btn"                 data-page="ambitions">Ambitions</button>
+    <button class="tab-btn"                 data-page="flaws">Flaws</button>
+    <button class="tab-btn"                 data-page="skills">Skills &amp; Habits</button>
+    <button class="tab-btn tab-connections" data-page="connections">Connections</button>
+  </nav>
+
+  <!-- ── CONTENT ── -->
+  <main class="content-area">
+
+    <!-- ══════════ HOME / OVERVIEW ══════════ -->
+    <div class="page-panel active" id="page-home">
+      <div class="home-hero">
+
+        <!-- Sidebar -->
+        <aside class="home-sidebar">
+          <div class="portrait-frame">
+            <span class="corner tl"></span>
+            <span class="corner tr"></span>
+            <span class="corner bl"></span>
+            <span class="corner br"></span>
+            <div class="portrait-inner">
+              <span class="portrait-sigil">❄</span>
+              <span class="portrait-label">Mariya Stark</span>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-row">
+              <span class="stat-key">House</span>
+              <span class="stat-val">Stark</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-key">Lineage</span>
+              <span class="stat-val">Stark &amp; Royce</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-key">Origin</span>
+              <span class="stat-val">Winterfell</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-key">Calling</span>
+              <span class="stat-val">Healer &amp; Observer</span>
+            </div>
+          </div>
+
+          <div class="arc-mini">
+            <div class="arc-mini-label">Arc</div>
+            <span class="arc-tag-sm">Observer forced into action</span>
+            <span class="arc-tag-sm">Softness tested by a harder world</span>
+            <span class="arc-tag-sm">Caught between North and South</span>
+          </div>
+        </aside>
+
+        <!-- Main scrollable origins -->
+        <div class="home-main">
+          <div class="parchment origins-card">
+            <div class="card-top">
+              <span class="gem-sm"></span>
+              <span class="c-label">Public Reputation</span>
+              <span class="c-rule"></span>
+            </div>
+            <p>She is known, where she is known at all, as a daughter of House Stark, arrived from the North in her brother's company, which might even be a surprise to him, though it is doubtful for that long a journey.</p>
+            <p>Those who have observed her in passing note a stillness about her, unlike withdrawal. She listens before she speaks, and she speaks less than most, but she misses very little, and her gentle comments on the most random parts of a conversation can prove so. There is a quality to her attention that unsettles some and reassures others, the sense that she is not merely present in a conversation but has understood something beneath it that no one has yet put into words.</p>
+            <p>She comes from Winterfell, by blood and by bone, and the North is in her bearing, whether she announces it or not. She does not move through the South with the wide-eyed hunger of someone starved for warmth; well, that is a lie. She moves through it with the careful, genuine interest of someone taking notes on a world that has always existed at a remove from her own, learning it as she would learn any new thing: slowly, thoroughly, and without pretending to more certainty than she has earned. With just a flair of eagerness that can seem endearing or pitiful, depending on the company.</p>
+            <p>She has made no great impression yet. She has sought none. What reputation she possesses is small and quiet and almost entirely consistent: she is kind, she is observant, and she is not quite what people expect when they hear her name.</p>
+          </div>
+
+          <!-- Closing quote on home -->
+          <div class="parchment closing-card">
+            <div class="closing-ornament">
+              <span class="o-line"></span><span class="o-dot"></span><span class="o-gem"></span><span class="o-dot"></span><span class="o-line r"></span>
+            </div>
+            <blockquote>
+              She was not soft because she had not suffered.<br>
+              She was soft because she had decided to be,<br>
+              and there is no stubbornness in the world quite like that.
+            </blockquote>
+            <div class="closing-ornament bot">
+              <span class="o-line"></span><span class="o-dot"></span><span class="o-gem"></span><span class="o-dot"></span><span class="o-line r"></span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div><!-- /home -->
+
+    <!-- ══════════ THE STORY ══════════ -->
+    <div class="page-panel" id="page-story">
+      <div class="scroll-col">
+
+        <div class="parchment page-header-card header-teal">
+          <div class="page-section-title">The Story</div>
+          <div class="page-section-sub">Origins &amp; Formation</div>
+          <div class="header-divider">
+            <span class="hd-gem"></span>
+            <span class="hd-dot"></span>
+            <span class="hd-line"></span>
+          </div>
+        </div>
+
+        <div class="parchment story-card">
+          <div class="card-top">
+            <span class="gem-sm"></span>
+            <span class="c-label">Inheritance</span>
+            <span class="c-rule"></span>
+          </div>
+          <p>Mariya Stark was born to Lord Berenger Stark and Scarlet Royce, and she carries both houses in her bones, whether she intends to or not. From her father, she inherited the gravity of the North, that particular stillness which is not emptiness but depth, a quietness that has weight to it, that asks something of the people around it without ever making the request aloud. From her mother came something older and harder to name, a mountain-bred stubbornness wrapped in warmth, a brightness that refused to be dulled by grey skies or grey stone or the long silences of a Northern winter. Mariya did not choose which parts of herself to keep from each of them. She simply became both and has spent her life learning what to do with the tension between the two.</p>
+          <p>She grew up in her father's house during his later years, when the great halls had more echo, and the lessons were long and often lonely. She was not unhappy, but she was restless in a way that the castle walls could not resolve. She watched, and she listened, and she stored away what she found. She noticed which servants were tired and which were frightened. She noticed where the cold came in and where the warmth held longest. She noticed, above everything else, that the world was full of people carrying pain they had never been taught to put down, and that nobody seemed to think this was something that could be helped.</p>
+        </div>
+
+        <div class="parchment story-card">
+          <div class="card-top">
+            <span class="gem-sm"></span>
+            <span class="c-label">The Maester's Door</span>
+            <span class="c-rule"></span>
+          </div>
+          <p>It was this noticing that first dragged her to the Maester's door. She was young enough that it should have been easy to dismiss her, and for a while, it was. She knocked and was told to go away. She came back. She was told again. She came back again, this time with a question so specific and so earnest that the Maester, despite himself, answered it. Then she asked another. And another after that. She had a gift for questions that sounded innocent until they had already pulled a long answer out of a person who had not planned to give one, and she used it without shame.</p>
+          <p>At first, the Maester tolerated her as one tolerates a persistent draft, with a mixture of resignation and mild irritation. She was underfoot. She touched things she had not been given leave to touch. She read texts that were not intended for her eyes and then returned to ask what certain passages meant, which told him she had understood enough to know what she did not yet understand, which was more than could be said for most. Slowly, and not without reluctance, he began to answer her properly. Then, to explain without being asked. Then to set aside time for her, deliberately, and to stop pretending he was not doing it.</p>
+          <p>What earned her a real place at his side was not persistence alone, though persistence had opened the door. It was her nature with the material itself. She did not learn medicine because she had been told to, or because it was the only useful thing available to her. She learned it because it fascinated her at a level that felt almost physical, a pull toward understanding how bodies worked, how they failed, how they could be coaxed back toward health with patience and the right knowledge.</p>
+        </div>
+
+        <div class="parchment story-card">
+          <div class="card-top">
+            <span class="gem-sm"></span>
+            <span class="c-label">The Herb Lore</span>
+            <span class="c-rule"></span>
+          </div>
+          <p>She memorized the properties of herbs not as a list to be recited but as a living catalogue she could move through intuitively, reaching for the right name and the right use before she had consciously thought it through. Feverfew and its gift for heads that ached behind the eyes. Milk of the poppy measured with care, because generosity with it was its own cruelty in time. Willow bark steeped long and slow for pain that had settled into joints. Ginger worked into a drink to settle a stomach that would not calm. Yarrow pressed into a wound to slow bleeding while something better was prepared. Elderflower in warm water for a fever that needed coaxing down gently. She learned which roots were poisonous in large amounts and medicinal in small ones, and understood that most of what healed and most of what harmed came from the same earth, separated only by measure and intention.</p>
+          <p>She learned the body alongside the herbs, studying its systems with a seriousness that startled the Maester and occasionally unsettled the people around her, who felt that a lord's daughter had no particular business knowing how a lung worked or what a liver did or why certain blends moved through blood faster than others. She disagreed, quietly and completely. She studied how sickness spread and where it took hold first. She learned to read a person's colour and their breath and the particular look in their eyes that came before they admitted they were unwell, because people were almost always unwell before they said so, and the time between those two things was when the most good could be done. She mixed and she measured. She learned which combinations soothed and which ones fought each other and which ones, combined carelessly, could do real damage. She made notes in a hand that grew steadier the more she practised, and she returned to those notes often, revising what she had thought she understood once she understood it better.</p>
+        </div>
+
+        <div class="parchment story-card">
+          <div class="card-top">
+            <span class="gem-sm"></span>
+            <span class="c-label">The Children of the Castle</span>
+            <span class="c-rule"></span>
+          </div>
+          <p>Outside the Maester's quarters, she had a second education entirely, conducted in secret and carried out with tremendous enjoyment. The children of the castle and the surrounding land, the kennel keeper's son, the daughters of the stable hands, the crofters' children who came in from the fields with dirt on their knees and a talent for getting into places they should not have been, found in Mariya something most of the castle's inhabitants did not offer them: someone who came to where they were, sat down without making it strange, and stayed as long as she was wanted. Not that her family neglected the people of the land. No, far from it. But she organized picnics in spots she had scouted herself, tucked away from the sight lines of the hall and the judgment of anyone who might have opinions about a Stark girl sharing her bread with a farrier's daughter. She carried baskets of food out past the walls on the pretence of gathering herbs, which was not entirely untrue, she always came back with herbs as well, but the gathering was rarely the point. The point was the children, and what they needed, and whether she could provide it without anyone making it into something complicated.</p>
+          <p>When one of them was sick, she came anyway. She sat with a child who had a cough that would not leave, made a steam infusion with thyme and a little honey, and sat beside the child until the breathing eased. She cleaned small wounds with the careful efficiency of someone who had been taught to take infection seriously. She assessed fevers with a steady hand and a calm face because she had learned that the person tending the sick set the temperature of the room, and if she was calm, those around her could find calm as well. She did all of this out of sight and never spoke of it in the hall, not because she was ashamed of it, but because some things worked better when they were not subject to commentary, and her presence among common children would have been subject to a great deal of it.</p>
+          <p>She is not hard. That is the thing most people misread in her. They see the watchfulness and expect armour beneath it, but what is actually there is something more difficult to defend. It is a genuine tenderness, chosen deliberately and maintained without apology, toward the people she moves among. It is not naivety. She knows what people are capable of. She has watched it with her own steady eyes, has felt it in small ways herself. She chooses warmth regardless, holds it as a practice she returns to rather than a feeling she waits to have, and she gives far more of herself than most would think to ask for. She forgives more readily than she forgets, and she does not forget easily.</p>
+        </div>
+
+        <div class="parchment story-card">
+          <div class="card-top">
+            <span class="gem-sm"></span>
+            <span class="c-label">Going South</span>
+            <span class="c-rule"></span>
+          </div>
+          <p>As her brother Arthor and his children went south, Mariya went with them. Well, not that she was invited by anyone but herself. This was not a complicated decision on her part, though others made it more complicated than it needed to be. They were going, and she wanted to go, and the warmth of the South had been calling to her across the long Northern winters for as long as she could remember, not as an escape but as an answer to a question she had not quite been able to form.</p>
+          <p>She wanted to feel the sun enough to toast her skin, to walk through air that did not carry cold in it that made her lungs feel like how people describe the Wall, to discover what parts of herself had been shaped by the North specifically and what parts were simply her, independent of weather and stone. She carries the North inside her, heavy and constant, settled at the bottom of everything she does. It is not something she is trying to leave behind. But she has gone to find out what she is when the North is something she carries rather than something she is standing inside, and what she finds in the warmth and what it makes of her is still, slowly and with great interest, being decided.</p>
+        </div>
+
+      </div>
+    </div><!-- /story -->
+
+    <!-- ══════════ PERSONALITY ══════════ -->
+    <div class="page-panel" id="page-personality">
+      <div class="scroll-col">
+
+        <div class="parchment page-header-card header-teal">
+          <div class="page-section-title">Personality</div>
+          <div class="page-section-sub">The nature beneath the quiet</div>
+          <div class="header-divider">
+            <span class="hd-gem"></span>
+            <span class="hd-dot"></span>
+            <span class="hd-line"></span>
+          </div>
+        </div>
+
+        <div class="parchment entry-card entry-teal">
+          <div class="card-top">
+            <span class="gem-sm"></span>
+            <span class="c-label">Empathy</span>
+            <span class="c-rule"></span>
+          </div>
+          <div class="entry-body">Empathetic to a fault, she feels the weight of other people's lives as if they were her own. Where most learn to filter the emotions of those around them, she absorbs them, the grief of servants, the worry of soldiers, the loneliness of children, and carries it all without ever being asked to.</div>
+        </div>
+
+        <div class="parchment entry-card entry-teal">
+          <div class="card-top">
+            <span class="gem-sm"></span>
+            <span class="c-label">Perception</span>
+            <span class="c-rule"></span>
+          </div>
+          <div class="entry-body">Perceptive and quietly observant, she understands a room before she speaks in it. She reads the unspoken agreements between people, the small tensions they are pretending not to have, the things they want to say and have decided not to. She stores all of it carefully and rarely reveals how much she has seen.</div>
+        </div>
+
+        <div class="parchment entry-card entry-teal">
+          <div class="card-top">
+            <span class="gem-sm"></span>
+            <span class="c-label">Curiosity</span>
+            <span class="c-rule"></span>
+          </div>
+          <div class="entry-body">Curious in ways that get her into trouble, she asks questions that ladies are not supposed to ask. Not out of provocativeness, but out of a genuine, persistent need to understand. She cannot leave an unanswered question alone. She has learned to be tactful about when she asks, but she always asks eventually.</div>
+        </div>
+
+        <div class="parchment entry-card entry-teal">
+          <div class="card-top">
+            <span class="gem-sm"></span>
+            <span class="c-label">Patience &amp; Impulse</span>
+            <span class="c-rule"></span>
+          </div>
+          <div class="entry-body">Patient in long stretches, then suddenly impulsive when something moves her deeply enough. She can wait for most things. But when someone she loves is in pain, or when she witnesses an injustice that is within her power to address, the patience collapses entirely, and she acts before she has reasoned it through.</div>
+        </div>
+
+        <div class="parchment entry-card entry-teal">
+          <div class="card-top">
+            <span class="gem-sm"></span>
+            <span class="c-label">Stubbornness</span>
+            <span class="c-rule"></span>
+          </div>
+          <div class="entry-body">Stubborn once her mind is made up. She bends on small things and seldom on the ones that matter. Once she has decided what is right, not just correct, but genuinely right, she is nearly impossible to move. This quality has cost her relationships. She considers it worth the cost.</div>
+        </div>
+
+      </div>
+    </div><!-- /personality -->
+
+    <!-- ══════════ AMBITIONS ══════════ -->
+    <div class="page-panel" id="page-ambitions">
+      <div class="scroll-col">
+
+        <div class="parchment page-header-card header-rose">
+          <div class="page-section-title">Ambitions</div>
+          <div class="page-section-sub">What she is reaching toward</div>
+          <div class="header-divider">
+            <span class="hd-gem"></span>
+            <span class="hd-dot"></span>
+            <span class="hd-line"></span>
+          </div>
+        </div>
+
+        <div class="parchment entry-card entry-rose">
+          <div class="card-top">
+            <span class="gem-sm"></span>
+            <span class="c-label">To Be Seen</span>
+            <span class="c-rule"></span>
+          </div>
+          <div class="entry-body">To be seen as something more than a marriage prospect or a lord's decoration. She wants to be recognised for what she actually does, what she knows, what she is capable of. Not to be celebrated, she has little interest in that, but simply not to be dismissed before she has had the chance to show what she can offer.</div>
+        </div>
+
+        <div class="parchment entry-card entry-rose">
+          <div class="card-top">
+            <span class="gem-sm"></span>
+            <span class="c-label">To Understand</span>
+            <span class="c-rule"></span>
+          </div>
+          <div class="entry-body">To understand what truly drives people: what they fear, protect, and will sacrifice. She is not interested in power for its own sake, but she is deeply interested in motivation, in the particular machinery of what makes people do what they do, especially when they are doing things that cost them something.</div>
+        </div>
+
+        <div class="parchment entry-card entry-rose">
+          <div class="card-top">
+            <span class="gem-sm"></span>
+            <span class="c-label">To Ease the Burden</span>
+            <span class="c-rule"></span>
+          </div>
+          <div class="entry-body">To ease the harshness of common life, not out of guilt but out of genuine conviction that it matters. She has no particular theory of governance or grand vision for the realm. She has the specific, immediate conviction that if she can make one person's day less painful, she should. Scaled across a life, she believes this is the most important thing a person can do.</div>
+        </div>
+
+        <div class="parchment entry-card entry-rose">
+          <div class="card-top">
+            <span class="gem-sm"></span>
+            <span class="c-label">To Protect</span>
+            <span class="c-rule"></span>
+          </div>
+          <div class="entry-body">To protect the people she loves and those of the realm who have no one else to protect them. She takes this seriously in a way that is not dramatic but is entirely genuine. She has thought about what she would be willing to do for the people she cares for and arrived at answers that surprised even her. She holds those answers quietly, and she does not speak of them often.</div>
+        </div>
+
+      </div>
+    </div><!-- /ambitions -->
+
+    <!-- ══════════ FLAWS ══════════ -->
+    <div class="page-panel" id="page-flaws">
+      <div class="scroll-col">
+
+        <div class="parchment page-header-card header-purple">
+          <div class="page-section-title">Flaws</div>
+          <div class="page-section-sub">The cracks in the quiet</div>
+          <div class="header-divider">
+            <span class="hd-gem"></span>
+            <span class="hd-dot"></span>
+            <span class="hd-line"></span>
+          </div>
+        </div>
+
+        <div class="parchment entry-card entry-purple">
+          <div class="card-top">
+            <span class="gem-sm"></span>
+            <span class="c-label">Avoidance</span>
+            <span class="c-rule"></span>
+          </div>
+          <div class="entry-body">Avoids confrontation until the grievance has sat so long that it comes out badly when it finally does. She dislikes causing pain, which means she often delays the kind of honest conversation that would prevent more pain later. By the time she finally speaks, the thing has grown larger than it needed to, and her words come out harder than she intended.</div>
+        </div>
+
+        <div class="parchment entry-card entry-purple">
+          <div class="card-top">
+            <span class="gem-sm"></span>
+            <span class="c-label">Self-Giving</span>
+            <span class="c-rule"></span>
+          </div>
+          <div class="entry-body">Gives herself away, her time, energy, and care, before anyone asks, and rarely asks for any of it back. She is aware this is not sustainable. She continues regardless. Something in her believes that being useful is the same as being wanted, and she has not yet fully untangled whether that is wisdom or damage.</div>
+        </div>
+
+        <div class="parchment entry-card entry-purple">
+          <div class="card-top">
+            <span class="gem-sm"></span>
+            <span class="c-label">Trust</span>
+            <span class="c-rule"></span>
+          </div>
+          <div class="entry-body">Slow to trust, but once she does, she trusts completely. A betrayal hits her harder than it should. She knows this about herself. She knows that once she has decided a person is someone she can rely on, she gives them far more credit than they may have earned, and that she has been wrong about people before and will be wrong again.</div>
+        </div>
+
+        <div class="parchment entry-card entry-purple">
+          <div class="card-top">
+            <span class="gem-sm"></span>
+            <span class="c-label">Memory</span>
+            <span class="c-rule"></span>
+          </div>
+          <div class="entry-body">Holds grudges in silence, never quite forgetting, even when she forgives. She is genuine in her forgiveness. She does not use past hurts as weapons or bring them up unnecessarily. But she does not forget them either. They settle into the back of her mind, quiet and permanent, shaping how she holds the person who caused them from that point forward.</div>
+        </div>
+
+        <div class="parchment entry-card entry-purple">
+          <div class="card-top">
+            <span class="gem-sm"></span>
+            <span class="c-label">Asking for Help</span>
+            <span class="c-rule"></span>
+          </div>
+          <div class="entry-body">Struggles to ask for help, even when she is the one drowning. She is, in almost every area of her life, the person who helps. She does not know how to request the other direction without feeling that she is burdening someone who did not ask to be burdened, and so she tends to manage alone until she cannot manage at all.</div>
+        </div>
+
+      </div>
+    </div><!-- /flaws -->
+
+    <!-- ══════════ SKILLS ══════════ -->
+    <div class="page-panel" id="page-skills">
+      <div class="scroll-col">
+
+        <div class="parchment page-header-card header-teal">
+          <div class="page-section-title">Skills &amp; Habits</div>
+          <div class="page-section-sub">What she carries with her</div>
+          <div class="header-divider">
+            <span class="hd-gem"></span>
+            <span class="hd-dot"></span>
+            <span class="hd-line"></span>
+          </div>
+        </div>
+
+        <div class="parchment entry-card entry-gold">
+          <div class="card-top">
+            <span class="gem-sm"></span>
+            <span class="c-label">Herb Lore &amp; Healing</span>
+            <span class="c-rule"></span>
+          </div>
+          <div class="entry-body">Trained in herb lore and healing: poultices, tinctures, fever blends, pain relief. She knows how and why each preparation works, not merely that it does. She can improvise in a field with whatever is at hand, judge dosage by weight and constitution, and recognise the warning signs that require a Maester's intervention rather than her own.</div>
+        </div>
+
+        <div class="parchment entry-card entry-gold">
+          <div class="card-top">
+            <span class="gem-sm"></span>
+            <span class="c-label">Reading People</span>
+            <span class="c-rule"></span>
+          </div>
+          <div class="entry-body">Skilled at reading people quietly, without them noticing they are being read. She does not perform this ability; nothing is calculated in how she does it. It is simply how she pays attention, and she pays very close attention. She tends to know what someone is feeling before they have decided whether to tell her.</div>
+        </div>
+
+        <div class="parchment entry-card entry-gold">
+          <div class="card-top">
+            <span class="gem-sm"></span>
+            <span class="c-label">Building Loyalty</span>
+            <span class="c-rule"></span>
+          </div>
+          <div class="entry-body">Builds loyalty through presence and small acts rather than rank or command. She remembers names, circumstances, and small details that people mention once and do not expect to be recalled. She shows up. She follows through. The people around her come to depend on this over time, and they protect her in return in ways she has not always asked for but has sometimes needed.</div>
+        </div>
+
+        <div class="parchment entry-card entry-gold">
+          <div class="card-top">
+            <span class="gem-sm"></span>
+            <span class="c-label">At Ease Among the Common</span>
+            <span class="c-rule"></span>
+          </div>
+          <div class="entry-body">More comfortable among common folk than most lords' daughters would admit to being. She has always been this way. She does not perform it as a virtue or announce it as an identity. She simply finds the conversations easier, the expectations more honest, and the company, more often than not, more interesting.</div>
+        </div>
+
+      </div>
+    </div><!-- /skills -->
+
+    <!-- ══════════ CONNECTIONS ══════════ -->
+    <div class="page-panel" id="page-connections">
+      <div class="scroll-col">
+
+        <div class="parchment page-header-card header-purple" style="background: url(&quot;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0.22'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23p)' opacity='0.05'/%3E%3C/svg%3E&quot;), linear-gradient(148deg, #ECD8EE 0%, #DFD0EA 50%, #D4C6E2 100%);">
+          <div class="page-section-title" style="color:#3D2F50;">Connections</div>
+          <div class="page-section-sub" style="color:#5A4870;">The web of those she carries</div>
+          <div class="header-divider">
+            <span class="hd-gem" style="background:var(--purple);box-shadow:0 0 8px rgba(123,107,141,0.5);"></span>
+            <span class="hd-dot" style="background:var(--purple);"></span>
+            <span class="hd-line" style="background:linear-gradient(90deg,var(--purple),transparent);opacity:0.4;"></span>
+          </div>
+        </div>
+
+        <div class="parchment connections-card">
+          <div class="card-top">
+            <span class="gem-sm"></span>
+            <span class="c-label">Family</span>
+            <span class="c-rule"></span>
+          </div>
+          <div class="connection-entry">
+            <div class="connection-header">
+              <span class="connection-name">Arthor Stark</span>
+              <span class="connection-role">Brother</span>
+            </div>
+            <div class="connection-body">The reason she is here, though he may not have intended to be. She came south in his company and in the company of his children, uninvited by anyone but herself, and she has not yet decided whether that makes her brave or simply stubborn. Probably both.</div>
+          </div>
+          <div class="connection-divider"></div>
+          <div class="connection-entry">
+            <div class="connection-header">
+              <span class="connection-name">Josette Stark</span>
+              <span class="connection-role">Niece</span>
+            </div>
+            <div class="connection-body">She loves her with the particular fierceness reserved for the young and the ones who do not yet know they need protecting. She watches her carefully and tries not to make it obvious.</div>
+          </div>
+          <div class="connection-divider"></div>
+          <div class="connection-entry">
+            <div class="connection-header">
+              <span class="connection-name">Eon Stark</span>
+              <span class="connection-role">Nephew</span>
+            </div>
+            <div class="connection-body">She loves him quietly and without condition, as she loves all things she has decided to keep. He is Stark through and through, and she finds in that something that steadies her, this far from home.</div>
+          </div>
+        </div>
+
+      </div>
+    </div><!-- /connections -->
+
+  </main>
+</div>
+
+<script>
+// ── Tab navigation ────────────────────────────────────────────
+const tabs   = document.querySelectorAll('.tab-btn');
+const panels = document.querySelectorAll('.page-panel');
+
+tabs.forEach(btn => {
+  btn.addEventListener('click', () => {
+    const target = btn.dataset.page;
+
+    tabs.forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+
+    panels.forEach(p => {
+      p.classList.remove('active');
+      if (p.id === 'page-' + target) {
+        p.classList.add('active');
+        // Reset scroll inside the new panel
+        const col = p.querySelector('.scroll-col, .home-main');
+        if (col) col.scrollTop = 0;
+      }
+    });
+  });
+});
+
+// ── Floating dust particles ───────────────────────────────────
+const canvas = document.getElementById('dust');
+const ctx    = canvas.getContext('2d');
+
+function resize() {
+  canvas.width  = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+window.addEventListener('resize', resize);
+resize();
+
+const COLORS = [
+  'rgba(220,150,130,',
+  'rgba(200,130,100,',
+  'rgba(180,140,200,',
+  'rgba(160,120,190,',
+  'rgba(230,190,140,',
+  'rgba(196,132,154,',
+  'rgba(200,180,220,',
+];
+
+class Mote {
+  constructor() { this.reset(true); }
+  reset(init) {
+    this.x           = Math.random() * canvas.width;
+    this.y           = init ? Math.random() * canvas.height : canvas.height + 10;
+    this.r           = Math.random() * 1.6 + 0.3;
+    this.base        = Math.random() * 0.38 + 0.12;
+    this.a           = this.base;
+    this.vy          = -(Math.random() * 0.32 + 0.07);
+    this.vx          = (Math.random() - 0.5) * 0.2;
+    this.wobble      = Math.random() * Math.PI * 2;
+    this.wobbleSpeed = Math.random() * 0.01 + 0.004;
+    this.wobbleAmp   = Math.random() * 0.65 + 0.28;
+    this.color       = COLORS[Math.floor(Math.random() * COLORS.length)];
+    this.life        = 0;
+    this.maxLife     = Math.random() * 480 + 240;
+  }
+  update() {
+    this.wobble += this.wobbleSpeed;
+    this.x += this.vx + Math.sin(this.wobble) * this.wobbleAmp;
+    this.y += this.vy;
+    this.life++;
+    const p = this.life / this.maxLife;
+    if      (p < 0.12) this.a = this.base * (p / 0.12);
+    else if (p > 0.72) this.a = this.base * (1 - (p - 0.72) / 0.28);
+    else               this.a = this.base;
+    if (this.life >= this.maxLife || this.y < -10) this.reset(false);
+  }
+  draw() {
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+    ctx.fillStyle = this.color + this.a + ')';
+    ctx.fill();
+  }
+}
+
+const motes = Array.from({ length: 220 }, () => new Mote());
+
+function loop() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  motes.forEach(m => { m.update(); m.draw(); });
+  requestAnimationFrame(loop);
+}
+loop();
+</script>
+
+</body>
+</html>
